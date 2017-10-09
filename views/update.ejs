@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MY APP</title>
+</head>
+
+<body>
+    <h2>Update your Blog</h2>
+    <form class="quotes" action="/update/<%= quotes._id %> " method="POST" onSubmit="return isEmpty()">
+        <input type="hidden" id="date" name="date">
+        <div><label><input id = "title" placeholder = "Title" name="title" value="<%= quotes.title %>"></label></div><br><br>
+        <div><label><textarea id = "text" placeholder = "Text" rows=5 cols=50 name="text" ><%= quotes.text %></textarea></label></div><br><br>
+        <input type="submit" value="Update Post" />
+    </form>
+
+</body>
+
+</html>
+
+<script>
+    n = new Date();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    document.getElementById("date").value = m + "/" + d + "/" + y;
+
+    function isEmpty() {
+        var bool1 = true;
+        var bool2 = true;
+        if (document.getElementById("title").value == '') {
+            document.getElementById("title").style.borderColor = "red";
+            bool1 = false;
+        }
+        if (document.getElementById("text").value == '') {
+            document.getElementById("text").style.borderColor = "red";
+            bool2 = false;
+        }
+        if (bool1 == false || bool2 == false) {
+            return false;
+        }
+        return true;
+    }
+
+</script>
