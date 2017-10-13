@@ -21,11 +21,17 @@
 
 <script>
     n = new Date();
+    h = n.getHours();
+    M = n.getMinutes();
     y = n.getFullYear();
     m = n.getMonth() + 1;
     d = n.getDate();
-    document.getElementById("date").value = m + "/" + d + "/" + y;
-
+    if (h < 12){
+    document.getElementById("date").value = h + ":" + M + " AM " + m + "/" + d + "/" + y;
+    }
+    else {
+        document.getElementById("date").value = h + ":" + M + " PM " + m + "/" + d + "/" + y;
+    }
     function isEmpty() {
         var bool1 = true;
         var bool2 = true;

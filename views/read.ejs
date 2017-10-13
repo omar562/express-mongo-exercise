@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MY APP</title>
+</head>
+
+<body>
+    <h2>
+        <%= quotes.title %>
+    </h2>
+    <p>
+        <%= quotes.text %>
+            <br><br> last updated
+            <%= quotes.date %>
+    </p>
+    <br>
+    <h3>
+        Comments
+    </h3>
+    <form class="quotes" action="/comment/<%= quotes._id %> " method="POST" onSubmit="return isEmpty()">
+        <input type="hidden" id="date" name="date">
+        <br>
+        <input type="text" id="comment" name="commenttext">
+        <input type="submit" value="Add Comment" />
+    </form>
+
+    
+    <% if (quotes.comment.length > 1) { %>
+    <ul class="quotes">
+        <% for(var i=1; i<quotes.comment.length; i++) {%>
+            <li class="quote">
+                <p>
+                    <%= quotes.comment[i].commenttext %>
+                    (
+                    <%= quotes.comment[i].date %>)
+                </p>
+            </li>
+            <% } } else {%>
+        <p>You don't have any comments yet!</p>
+        <% } %>
+    </ul>
+</body>
+
+</html>
+<script>
+    n = new Date();
+    h = n.getHours();
+    M = n.getMinutes();
+    y = n.getFullYear();
+    m = n.getMonth() + 1;
+    d = n.getDate();
+    if (h < 12){
+    document.getElementById("date").value = h + ":" + M + " AM " + m + "/" + d + "/" + y;
+    }
+    else {
+        document.getElementById("date").value = h + ":" + M + " PM " + m + "/" + d + "/" + y;
+    }
+    function isEmpty() {
+        if (document.getElementById("comment").value == '') {
+            document.getElementById("comment").style.borderColor = "red";
+            return false;
+        }
+        return true;
+    }
+
+</script>

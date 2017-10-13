@@ -49,7 +49,15 @@ app.post('/add', (req, res) => {
         //here i named my collection quotes
         //save method allows us to enter data to database
         //here req.body is the data we want to add to the quotes collection
-        db.collection('quotes').save(req.body, (err, result) => {
+        db.collection('quotes').save({
+            title: req.body.title,
+            date: req.body.date,
+            text: req.body.text,
+            comment: [{
+                date: req.body.date,
+                commenttext: req.body.comment
+            }]
+        }, (err, result) => {
             if (err) {
                 return next(err)
             }
@@ -72,28 +80,67 @@ app.post('/add', (req, res) => {
  */
 // reading post
 app.all('/read/:id', (req, res, next) => {
-    //getting the id of the post chosen
+    // getting the id of the post chosen
     const {
         id
     } = req.params
-    // decoding the id
+
+    //ObjectID takes an id and returns it's instance
     const _id = ObjectId(decodeURI(id))
-    //finding the element that needs to be displayed using the id
+
+    // removing the element that has this id from database
     db.collection('quotes')
-        //findOne method allows to get data from database using id, name...
         .findOne({
             _id
         }, function (err, result) {
             if (err) {
                 return next(err);
             }
-            //displaying the content using res.send 
-            //inside res.send html is written between ``
-            res.send(`<h3>${result.title}</h1><p>${result.text}<br><br>last updated ${result.date}</p>`)
+            // redirecting the user to main page
+            res.render('read.ejs', {
+                quotes: result
+            })
         })
 })
 
-// deleting post
+//commenting on post
+app.all('/comment/:id', (req, res, next) => {
+    // getting the id and returns it's instance
+    const {
+        id
+    } = req.params
+    //checking if input field is not empty
+    if (req.body.commenttext.length != 0) {
+        //ObjectID takes an id and returns it's instance
+        const _id = ObjectId(decodeURI(id))
+
+        //finding the id of the post I'm adding a comment to
+        db.collection('quotes').findOneAndUpdate({
+            _id
+        }, 
+            //push method adds to the values entered to the values that are already in the database
+            // here we add a new comment to the array of comments in the database and set it's date and text
+            {
+            $push: {
+                comment: {
+                    date: req.body.date,
+                    commenttext: req.body.commenttext
+                }
+            }
+        }, (err, result) => {
+            if (err) {
+                return next(err)
+            }
+            console.log('saved to database')
+            //redirecting the user to read to avoid infinite loading
+            res.redirect('/read/' + id)
+        })
+    } else {
+        res.redirect('/read/' + id)
+    }
+})
+
+// deleting posts
 app.all('/delete/:id', (req, res, next) => {
     // getting the id of the post chosen
     const {
@@ -156,7 +203,10 @@ app.post('/update/:id', (req, res, next) => {
             // and then set which values we want to update in that element 
             .findOneAndUpdate({
                     _id: _id
-                }, {
+                }, 
+                //set method replaces the values that are there by the values entered
+                // the first line here replaces the value of title by req.body.title in the database
+                    {
                     $set: {
                         title: req.body.title,
                         text: req.body.text,

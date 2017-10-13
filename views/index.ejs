@@ -1,68 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+    .container {
+        float: left;
+        width: 100%;
+    }
+
+    .container div {
+        float: left;
+    }
+
+</style>
+
 <head>
     <meta charset="UTF-8">
     <title>MY APP</title>
 </head>
 
 <body>
-    <h1>My Blog</h1>
-    <h2>Create a new post</h2>
+    <div class="container">
+        <div style="margin-right: 100px;">
+            <h1>My Blog</h1>
+            <h2>Create a new post</h2>
 
-    <form action="/add" method="POST" onSubmit="return isEmpty()">
-        <input type="hidden" id="date" name="date">
-        <input id="title" type="text" placeholder="Title" name="title">
-        <br><br>
-        <textarea id="text" rows="5" cols="50" type="text" placeholder="Text" name="text"></textarea>
-        <br><br>
-        <button type="submit">Add Post</button>
-    </form>
-    <br>
-    <h2>Old posts</h2>
-    <p>
-        <span>Sort by </span>
-        <span><a href="/default/<%= page%>">Id</a></span>
-        <span><a href="/title/<%= page%>">Name</a></span>
-        <span><a href="/date/<%= page%>">Date</a></span>
-    </p>
-    <ul class="quotes">
-        <% for(var i=0; i<quotes.length; i++) {%>
-            <li class="quote">
-                <h3 style="margin:0; display: inline-block;">
-                    <%= quotes[i].title %>
-                </h3>
+            <form action="/add" method="POST" onSubmit="return isEmpty()">
+                <input type="hidden" id="date" name="date">
+                <input type="hidden" id="comment" name="comment">
+                <input id="title" type="text" placeholder="Title" name="title">
+                <br><br>
+                <textarea id="text" rows="5" cols="50" type="text" placeholder="Text" name="text"></textarea>
+                <br><br>
+                <button type="submit">Add Post</button>
+            </form>
+            <br>
+        </div>
+        <div style="margin-top: 60px;">
+            <h2>Old posts</h2>
+            <% if (quotes.length > 0) { %>
                 <p>
-                    <span><%= quotes[i].text.split(/\s+/).slice(0,4).join(' ') %></span>
-                    <span><a href="/read/<%= quotes[i]._id %>">read more...</a></span><br><br>
-                    <a style="color:#FF0000;" onclick="return confirm('Are you sure?')" href="/delete/<%= quotes[i]._id %>">delete post</a><br><br>
-                    <a style="color:#008000;" href="/edit/<%= quotes[i]._id %>">edit post</a>
-                    <span>last updated <%= quotes[i].date %></span>
+                    <span>Sort by </span>
+                    <span><a href="/default/<%= page%>">Id</a></span>
+                    <span><a href="/title/<%= page%>">Name</a></span>
+                    <span><a href="/date/<%= page%>">Date</a></span>
                 </p>
-            </li>
-            <% } %>
-                <p>
-
-                    <% if(previous) {%>
-                        <a href="<%=previous%>" class="previous">&laquo; Previous</a>
+                <ul class="quotes">
+                    <% for(var i=0; i<quotes.length; i++) {%>
+                        <li class="quote">
+                            <h3 style="margin:0; display: inline-block;">
+                                <%= quotes[i].title %>
+                            </h3>
+                            <p>
+                                <span><%= quotes[i].text.split(/\s+/).slice(0,4).join(' ') %></span>
+                                <span><a href="/read/<%= quotes[i]._id %>">read more...</a></span><br><br>
+                                <a style="color:#008000;" href="/edit/<%= quotes[i]._id %>">edit post</a>
+                                <span>last updated <%= quotes[i].date %></span><br><br>
+                                <a style="color:#FF0000;" onclick="return confirm('Are you sure?')" href="/delete/<%= quotes[i]._id %>">delete post</a>
+                            </p>
+                        </li>
                         <% } %>
-                            <% if(next) {%>
-                                <a href="<%=next%>" class="next"> Next &raquo;</a>
-                                <% } %>
+                            <p>
 
-                </p>
-    </ul>
+                                <% if(previous) {%>
+                                    <a href="<%=previous%>" class="previous">&laquo; Previous</a>
+                                    <% } %>
+                                        <% if(next) {%>
+                                            <a href="<%=next%>" class="next"> Next &raquo;</a>
+                                            <% } %>
 
+                            </p>
+                </ul>
+                <% } else { %>
+                    <p>You did not post anything yet!</p>
+                    <% } %>
+        </div>
+    </div>
 </body>
 
 </html>
 <script>
-    n = new Date();
+   n = new Date();
+    h = n.getHours();
+    M = n.getMinutes();
     y = n.getFullYear();
     m = n.getMonth() + 1;
     d = n.getDate();
-    document.getElementById("date").value = m + "/" + d + "/" + y;
-
+    if (h < 12){
+    document.getElementById("date").value = h + ":" + M + " AM " + m + "/" + d + "/" + y;
+    }
+    else {
+        document.getElementById("date").value = h + ":" + M + " PM " + m + "/" + d + "/" + y;
+    }
     function isEmpty() {
         var bool1 = true;
         var bool2 = true;
