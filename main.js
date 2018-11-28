@@ -190,7 +190,7 @@ app.all('/edit/:id', (req, res, next) => {
         })
 })
 
-//the action of the form used in update.ejs is here
+//the action of the form used in `update`.ejs is here
 app.post('/update/:id', (req, res, next) => {
     //check if the input fields are not empty
     if (req.body.title.length != 0 && req.body.text.length != 0) {
